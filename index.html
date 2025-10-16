@@ -6,6 +6,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="BADOG DENTAL: Bruxism, Airways, Decay, Oral Cancer, Gum Disease – quick self-check to raise awareness. Not medical advice.">
   <style>
+    <style>
+  /* Force light theme + solid contrast */
+  :root{
+    --fg:#1b2330;          /* main text color (dark) */
+    --muted:#4a5568;       /* secondary text */
+    --bg:#f5f7fb;          /* page background */
+    --card:#ffffff;        /* card/tile background */
+    --brand:#155eef;       /* accent/brand */
+    --ok:#1a7f37;          /* Low pill */
+    --med:#b98900;         /* Medium pill */
+    --high:#b12525;        /* High pill */
+  }
+
+  /* Make sure tiles and question blocks are clearly white with dark text */
+  .tile, .card, .q { background: var(--card); color: var(--fg); }
+
+  /* Labels inside options sometimes inherit muted color—make them readable */
+  label.opt { color: var(--fg); }
+
+  /* If your OS dark mode was flipping colors, disable our dark scheme */
+  @media (prefers-color-scheme: dark){ 
+    /* do nothing: this overrides the earlier dark-mode block */
+  }
+</style>
     :root{
       --fg:#111; --muted:#666; --bg:#f7f7fb; --card:#fff; --brand:#155eef; --ok:#1a7f37; --med:#b98900; --high:#b12525;
       --radius:14px; --shadow:0 6px 24px rgba(0,0,0,.08);
