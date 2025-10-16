@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>BADOG DENTAL – 2-Minute Risk Awareness</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="BADOG DENTAL: Bruxism, Airways, Decay, Oral Cancer, Gum Disease – quick self-check to raise awareness. Not medical advice.">
+  <style>
+    :root{
+      --fg:#111; --muted:#666; --bg:#f7f7fb; --card:#fff; --brand:#155eef; --ok:#1a7f37; --med:#b98900; --high:#b12525;
+      --radius:14px; --shadow:0 6px 24px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
+    header{padding:24px 16px;text-align:center}
+    .logo{font-weight:800;letter-spacing:.4px}
+    .badge{display:inline-block;margin-top:6px;padding:4px 10px;border-radius:999px;background:#eaf0ff;color:#234; font-size:12px}
+    main{max-width:880px;margin:0 auto;padding:0 16px 80px}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin:16px 0}
+    h1{font-size:28px;margin:0 0 8px}
+    h2{font-size:20px;margin:12px 0}
+    h3{font-size:16px;margin:12px 0 8px}
+    p{margin:8px 0;color:var(--muted)}
+    .actions{display:flex;gap:12px;flex-wrap:wrap}
+    button{border:none;border-radius:10px;padding:12px 16px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer}
+    button[disabled]{opacity:.5;cursor:not-allowed}
+    .ghost{background:#e9ecf8;color:#1b2a57}
+    .progress{height:10px;background:#e9e9f1;border-radius:999px;overflow:hidden;margin:12px 0}
+    .bar{height:100%;width:0;background:var(--brand);transition:width .2s}
+    .qgroup{margin-top:8px}
+    fieldset{border:none;margin:0;padding:0}
+    .q{padding:12px 12px;border:1px solid #eee;border-radius:12px;margin:10px 0;background:#fcfcff}
+    .opts{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+    label.opt{padding:8px 10px;border:1px solid #ddd;border-radius:10px;cursor:pointer;user-select:none}
+    input[type=radio]{display:none}
+    input[type=radio]:checked + label.opt{border-color:var(--brand);box-shadow:0 0 0 2px #dfe8ff}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .tile{border-radius:12px;padding:14px;background:#fafbff;border:1px solid #eef;position:relative}
+    .pill{position:absolute;top:12px;right:12px;padding:4px 10px;border-radius:999px;font-size:12px;color:#fff}
+    .pill.low{background:var(--ok)} .pill.med{background:var(--med)} .pill.high{background:var(--high)}
+    .small{font-size:12px;color:var(--muted)}
+    .footer{margin-top:6px;font-size:12px;color:#555}
+    .print{background:#0b6bcb}
+    .cta{background:#1a7f37}
+    .disclaimer{font-size:12px;color:#555}
+    @media (prefers-color-scheme: dark){
+      :root{--fg:#f5f6f8; --muted:#c4c7cf; --bg:#0b0e14; --card:#0f1219; --brand:#6aa3ff; --ok:#4fd08c; --med:#e2b24a; --high:#ff7070}
+      label.opt{border-color:#2a2f3a}
+      .q{border-color:#222}
+      .tile{background:#101522;border-color:#1e2533}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">🐶 BADOG DENTAL</div>
+    <div class="badge">Bruxism • Airways • Decay • Oral Cancer • Gum disease</div>
+  </header>
+  <main>
+    <section class="card" id="intro">
+      <h1>2-Minute Dental Risk Awareness</h1>
+      <p>Answer 15 quick questions (no signup, nothing stored). Get a simple risk readout across five areas dentists commonly assess. <strong>This is not medical advice or a diagnosis.</strong></p>
+      <div class="actions">
+        <button id="startBtn">Start now</button>
+        <button class="ghost" id="learnBtn">What is BADOG?</button>
+      </div>
+    </section>
+
+    <section class="card" id="about" hidden>
+      <h2>About BADOG</h2>
+      <p><strong>BADOG</strong> stands for <em>Bruxism, Airways, Decay, Oral Cancer, Gum disease</em>. It’s a public awareness tool to help you understand possible risk patterns and consider seeing a dentist for a professional assessment.</p>
+    </section>
+
+    <section class="card" id="quiz" hidden>
+      <h2>Questions</h2>
+      <div class="progress" aria-label="progress">
+        <div class="bar" id="progressBar"></div>
+      </div>
+      <form id="form"></form>
+      <div class="actions">
+        <button type="button" id="backBtn" class="ghost">Back</button>
+        <button type="button" id="nextBtn">Next</button>
+        <button type="button" id="finishBtn" hidden>See my results</button>
+      </div>
+      <p class="small">Tip: choose the best fit. You can come back and change answers before finishing.</p>
+    </section>
+
+    <section class="card" id="results" hidden>
+      <h2>Your BADOG results</h2>
+      <div class="grid" id="tiles"></div>
+      <h3>What to do next</h3>
+      <ul>
+        <li><strong>This tool is educational only.</strong> It can’t diagnose conditions. Risk labels are based on your answers.</li>
+        <li>Consider booking a visit with a dentist for a personalised exam and advice.</li>
+        <li>Bring these results; they can guide a focused conversation.</li>
+      </ul>
+      <div class="actions">
+        <button class="print" id="printBtn">Save/Print results</button>
+        <a href="#" id="bookLink" class="cta" role="button" style="text-decoration:none;padding:12px 16px;border-radius:10px;color:#fff">Book a dental check</a>
+      </div>
+      <p class="disclaimer"><strong>Disclaimer:</strong> BADOG DENTAL is informational and does not replace professional advice. If you have pain, swelling, non-healing mouth sores, fever, or trauma, seek urgent care.</p>
+    </section>
+
+    <div class="footer" style="text-align:center;">
+      <p>© <span id="year"></span> BADOG DENTAL · Educational use only · No data stored</p>
+    </div>
+  </main>
+
+<script>
+const QUESTIONS = [
+  { domain:'Bruxism', code:'B', items:[
+    { q:'Morning jaw/facial soreness or headaches?', opts:[
+      {t:'Never', v:0},{t:'Sometimes', v:1},{t:'Often', v:2}
+    ]},
+    { q:'Chipped/flattened teeth or unexplained tooth wear?', opts:[
+      {t:'No', v:0},{t:'Unsure', v:1},{t:'Yes', v:2}
+    ]},
+    { q:'Partner ever noticed grinding at night?', opts:[
+      {t:'No', v:0},{t:'Not sure', v:1},{t:'Yes', v:2}
+    ]}
+  ]},
+  { domain:'Airways', code:'A', items:[
+    { q:'Loud snoring or breathing pauses during sleep (observed)?', opts:[
+      {t:'No', v:0},{t:'Not sure', v:1},{t:'Yes', v:2}
+    ]},
+    { q:'Daytime sleepiness despite adequate hours?', opts:[
+      {t:'Rarely', v:0},{t:'Sometimes', v:1},{t:'Often', v:2}
+    ]},
+    { q:'Wake with dry mouth or sore throat?', opts:[
+      {t:'Rarely', v:0},{t:'Sometimes', v:1},{t:'Often', v:2}
+    ]}
+  ]},
+  { domain:'Decay', code:'D', items:[
+    { q:'Sugary drinks/snacks (incl. juices/energy drinks)?', opts:[
+      {t:'≤1 per day', v:0},{t:'2–3 per day', v:1},{t:'>3 per day', v:2}
+    ]},
+    { q:'Fluoride toothpaste use (twice daily)?', opts:[
+      {t:'Always', v:0},{t:'Sometimes', v:1},{t:'Rarely/Never', v:2}
+    ]},
+    { q:'New fillings or toothaches in last 2 years?', opts:[
+      {t:'No', v:0},{t:'Unsure', v:1},{t:'Yes', v:2}
+    ]}
+  ]},
+  { domain:'Oral Cancer', code:'O', items:[
+    { q:'Tobacco (any form) use?', opts:[
+      {t:'Never', v:0},{t:'Former', v:1},{t:'Current', v:2}
+    ]},
+    { q:'Alcohol (≥15 drinks/week or frequent binges)?', opts:[
+      {t:'No', v:0},{t:'Sometimes', v:1},{t:'Yes', v:2}
+    ]},
+    { q:'Non-healing mouth sore/red or white patch/hoarseness >2 weeks?', opts:[
+      {t:'No', v:0},{t:'Unsure', v:1},{t:'Yes', v:2}
+    ]}
+  ]},
+  { domain:'Gum disease', code:'G', items:[
+    { q:'Gums bleed with brushing/flossing?', opts:[
+      {t:'Rarely', v:0},{t:'Sometimes', v:1},{t:'Often', v:2}
+    ]},
+    { q:'Puffy/red gums or persistent bad breath?', opts:[
+      {t:'No', v:0},{t:'Mild', v:1},{t:'Yes', v:2}
+    ]},
+    { q:'Professional clean in the last 12 months?', opts:[
+      {t:'Yes', v:0},{t:'1–2 years ago', v:1},{t:'>2 years / never', v:2}
+    ]}
+  ]}
+];
+
+const THRESHOLDS = { low:[0,2], med:[3,4], high:[5,6] };
+
+const state = {
+  flat: [], // flattened items with domain reference
+  page: 0,  // paginated per-domain
+  answers: {} // key: flat index => value
+};
+
+const intro = document.getElementById('intro');
+const about = document.getElementById('about');
+const quiz = document.getElementById('quiz');
+const results = document.getElementById('results');
+const form = document.getElementById('form');
+const bar = document.getElementById('progressBar');
+const tiles = document.getElementById('tiles');
+const nextBtn = document.getElementById('nextBtn');
+const backBtn = document.getElementById('backBtn');
+const finishBtn = document.getElementById('finishBtn');
+document.getElementById('year').textContent = new Date().getFullYear();
+
+document.getElementById('startBtn').onclick=()=>{intro.hidden=true; about.hidden=true; startQuiz();};
+document.getElementById('learnBtn').onclick=()=>{about.hidden=!about.hidden;};
+document.getElementById('printBtn')?.addEventListener('click',()=>window.print());
+
+document.getElementById('bookLink').href = "#"; // TODO: replace with your booking URL
+
+function startQuiz(){
+  quiz.hidden=false;
+  // flatten items with pointers
+  state.flat = [];
+  QUESTIONS.forEach((section, di)=>{
+    section.items.forEach((it, qi)=>{
+      state.flat.push({domainIndex: di, questionIndex: qi, ...it, domain: section.domain, code: section.code});
+    });
+  });
+  state.page = 0;
+  renderPage();
+}
+
+function renderPage(){
+  // page is per-domain (0..4). Show those 3 questions.
+  const domain = QUESTIONS[state.page];
+  form.innerHTML = '';
+  const h = document.createElement('h3');
+  h.textContent = `${domain.domain} (${domain.code}) — 3 questions`;
+  form.appendChild(h);
+
+  domain.items.forEach((it, idx)=>{
+    const globalIndex = state.flat.findIndex(x=>x.domainIndex===state.page && x.questionIndex===idx);
+    const group = document.createElement('div'); group.className='q';
+    const q = document.createElement('div'); q.textContent = it.q; group.appendChild(q);
+    const fs = document.createElement('fieldset');
+    const opts = document.createElement('div'); opts.className='opts';
+    it.opts.forEach((o, oi)=>{
+      const id = `q${state.page}_${idx}_${oi}`;
+      const input = document.createElement('input');
+      input.type='radio'; input.name=`q_${globalIndex}`; input.id=id; input.value=o.v;
+      if(state.answers[globalIndex]!==undefined && Number(state.answers[globalIndex])===o.v){ input.checked=true; }
+      input.addEventListener('change', e=>{ state.answers[globalIndex]=Number(e.target.value); updateButtons(); });
+      const label = document.createElement('label'); label.className='opt'; label.setAttribute('for', id); label.textContent=o.t;
+      const wrap = document.createElement('div'); wrap.appendChild(input); wrap.appendChild(label);
+      opts.appendChild(wrap);
+    });
+    fs.appendChild(opts);
+    group.appendChild(fs);
+    form.appendChild(group);
+  });
+
+  const totalPages = QUESTIONS.length;
+  const answeredCount = Object.keys(state.answers).length;
+  const totalQs = state.flat.length;
+  const progress = Math.round(100 * answeredCount / totalQs);
+  bar.style.width = progress + '%';
+
+  backBtn.disabled = state.page===0;
+  nextBtn.hidden = state.page===totalPages-1;
+  finishBtn.hidden = state.page!==totalPages-1;
+  updateButtons();
+}
+
+function updateButtons(){
+  const domain = QUESTIONS[state.page];
+  const neededIndices = domain.items.map((_, idx)=>state.flat.findIndex(x=>x.domainIndex===state.page && x.questionIndex===idx));
+  const allAnswered = neededIndices.every(i => state.answers[i]!==undefined);
+  nextBtn.disabled = !allAnswered;
+  finishBtn.disabled = state.page===QUESTIONS.length-1 && !allAnswered;
+}
+
+backBtn.onclick = ()=>{ if(state.page>0){ state.page--; renderPage(); } };
+nextBtn.onclick = ()=>{ if(state.page<QUESTIONS.length-1){ state.page++; renderPage(); } };
+finishBtn.onclick = ()=>{ if(Object.keys(state.answers).length===state.flat.length){ computeResults(); } };
+
+function band(score){
+  if(score>=THRESHOLDS.high[0] && score<=THRESHOLDS.high[1]) return {label:'High', cls:'high'};
+  if(score>=THRESHOLDS.med[0] && score<=THRESHOLDS.med[1]) return {label:'Medium', cls:'med'};
+  return {label:'Low', cls:'low'};
+}
+
+function computeResults(){
+  const sums = {};
+  QUESTIONS.forEach((sec, di)=>{
+    sums[sec.domain]=0;
+    sec.items.forEach((_, qi)=>{
+      const gi = state.flat.findIndex(x=>x.domainIndex===di && x.questionIndex===qi);
+      sums[sec.domain]+= Number(state.answers[gi]||0);
+    });
+  });
+
+  tiles.innerHTML='';
+  QUESTIONS.forEach(sec=>{
+    const s = sums[sec.domain];
+    const b = band(s);
+    const tile = document.createElement('div'); tile.className='tile';
+    const tag = document.createElement('div'); tag.className='pill '+b.cls; tag.textContent=b.label; tile.appendChild(tag);
+    const h = document.createElement('h3'); h.textContent = `${sec.domain} (${sec.code})`; tile.appendChild(h);
+    const p = document.createElement('p'); p.innerHTML = `<strong>Score:</strong> ${s} / 6`; tile.appendChild(p);
+    const advice = document.createElement('p'); advice.className='small';
+    advice.innerHTML = adviceCopy(sec.domain, b.label);
+    tile.appendChild(advice);
+    tiles.appendChild(tile);
+  });
+
+  quiz.hidden = true;
+  results.hidden = false;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function adviceCopy(domain, band){
+  const base = {
+    'Low': 'Good news—keep up your current habits and maintain regular check-ups.',
+    'Medium':'Some risk signals—book a dental check to prevent problems early.',
+    'High':'Multiple risk signals—please book a professional assessment soon.'
+  }[band];
+
+  const specifics = {
+    'Bruxism':' Consider a nightguard assessment if you have wear, pain, or morning headaches.',
+    'Airways':' Snoring/daytime sleepiness can relate to airway issues—ask about screening.',
+    'Decay':' Reduce frequency of sugars, use fluoride toothpaste twice daily, and schedule a check/clean.',
+    'Oral Cancer':' If you notice persistent sores/patches/hoarseness >2 weeks, seek urgent evaluation.',
+    'Gum disease':' Bleeding/puffy gums warrant a professional clean and personalised hygiene plan.'
+  }[domain];
+
+  return base + (specifics? (' ' + specifics) : '');
+}
+
+// boot
+document.addEventListener('DOMContentLoaded', ()=>{ /* ready */ });
+</script>
+</body>
+</html>
